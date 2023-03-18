@@ -1,0 +1,11 @@
+<div class="login_container">
+  <div *ngIf="!isLoginMode; else registerCard">
+    <app-login-form
+      [loginMode]="isLoginMode"
+      (changeMode)="changeMode($event)"
+    ></app-login-form>
+  </div>
+  <ng-template #registerCard>
+    <app-register-form></app-register-form>
+  </ng-template>
+</div>

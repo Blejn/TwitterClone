@@ -1,0 +1,115 @@
+<mat-card>
+  <mat-card-title>Registration</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="registerForm" (submit)="(registerHandler)">
+      <div>
+        <mat-form-field>
+          <input
+            class="input"
+            type="text"
+            matInput
+            placeholder="Username..."
+            formControlName="username"
+          />
+        </mat-form-field>
+        <div
+          *ngIf="
+            registerForm.get('username')?.dirty &&
+            registerForm.get('username')?.touched
+          "
+        >
+          <mat-error color="warn"
+            ><small *ngIf="registerForm.get('username')?.errors?.['required']"
+              >Username is required</small
+            >
+            <small *ngIf="registerForm.get('username')?.errors?.['minlength']"
+              >Username has to min 3 elements</small
+            >
+          </mat-error>
+        </div>
+      </div>
+      <div>
+        <mat-form-field>
+          <input
+            type="password"
+            matInput
+            placeholder="Password..."
+            formControlName="password"
+          />
+        </mat-form-field>
+        <div
+          *ngIf="
+            registerForm.get('password')?.dirty &&
+            registerForm.get('password')?.touched
+          "
+        >
+          <mat-error color="warn"
+            ><small *ngIf="registerForm.get('password')?.errors?.['required']"
+              >password is required</small
+            >
+            <small *ngIf="registerForm.get('password')?.errors?.['minlength']"
+              >password has to min 3 elements</small
+            >
+          </mat-error>
+        </div>
+      </div>
+      <!-- FIRSTNAME -->
+      <div>
+        <mat-form-field>
+          <input
+            type="text"
+            matInput
+            placeholder="Firstname..."
+            formControlName="firstname"
+          />
+        </mat-form-field>
+        <div
+          *ngIf="
+            registerForm.get('firstname')?.dirty &&
+            registerForm.get('firstname')?.touched
+          "
+        >
+          <mat-error color="warn"
+            ><small *ngIf="registerForm.get('firstname')?.errors?.['required']"
+              >password is required</small
+            >
+          </mat-error>
+        </div>
+      </div>
+      <!-- LASTNAME -->
+      <div>
+        <mat-form-field>
+          <input
+            type="text"
+            matInput
+            placeholder="Lastname..."
+            formControlName="lastname"
+          />
+        </mat-form-field>
+        <div
+          *ngIf="
+            registerForm.get('lastname')?.dirty &&
+            registerForm.get('lastname')?.touched
+          "
+        >
+          <mat-error color="warn"
+            ><small *ngIf="registerForm.get('lastname')?.errors?.['required']"
+              >password is required</small
+            >
+          </mat-error>
+        </div>
+      </div>
+      <!-- location -->
+
+      <div class="button">
+        <button type="submit" mat-flat-button color="primary">
+          Create an account
+        </button>
+      </div>
+      <div class="info">
+        <small>You don't have an account</small>
+        <a (click)="modeChanged()" class="register_route">Create an account</a>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
