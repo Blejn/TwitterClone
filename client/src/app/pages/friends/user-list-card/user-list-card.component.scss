@@ -1,0 +1,11 @@
+mat-card {
+  min-width: 250px;
+  min-height: 100px;
+}
+mat-card-title {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+}

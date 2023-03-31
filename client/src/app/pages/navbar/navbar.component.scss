@@ -1,6 +1,17 @@
 .title {
-  color: black;
+  color: white;
   font-family: "Anton", sans-serif;
   letter-spacing: 2px;
   font-size: x-large;
+  cursor: pointer;
+}
+.navbar {
+  display: flex;
+  flex-direction: row;
+}
+.my-avatar .avatar-content {
+  background-color: red !important;
+}
+.row {
+  gap: 2rem;
 }
