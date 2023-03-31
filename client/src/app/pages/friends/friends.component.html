@@ -1,0 +1,25 @@
+<div class="friends_container">
+  <div class="search_container">
+    <mat-form-field class="example-full-width">
+      <input
+        (keyup.enter)="searchData($event)"
+        type="tel"
+        matInput
+        placeholder="Users..."
+        #searchbar
+      />
+      <mat-icon matSuffix>mode_edit</mat-icon>
+    </mat-form-field>
+  </div>
+  <div class="users_container">
+    <mat-paginator
+      class="pagination"
+      [length]="allElementsLength"
+      [pageSize]="3"
+      [pageSizeOptions]="[3, 6]"
+      aria-label="Select page"
+    >
+    </mat-paginator>
+    <app-all-users-section [users]="users"></app-all-users-section>
+  </div>
+</div>
