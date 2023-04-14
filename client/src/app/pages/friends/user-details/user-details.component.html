@@ -1,0 +1,52 @@
+<ng-container *ngIf="user$ | async as user"
+  ><div class="container">
+    <div class="nav_container">
+      <ngx-avatar
+        size="100"
+        class="my-avatar"
+        value="{{ user.username.split('')[0] }}"
+      >
+      </ngx-avatar>
+      <div class="profile_description">
+        <div class="profile_name">{{ user.username | uppercase }}</div>
+        <small>
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officiis,
+          rem dignissimos sapiente non voluptas sequi, velit numquam quibusdam
+          ullam, repellendus beatae. Doloremque molestiae excepturi minus
+          voluptatibus iste, aspernatur officiis labore!
+        </small>
+      </div>
+    </div>
+    <div class="info_container">
+      <div class="label">
+        <div class="title">First name:</div>
+        <div>{{ user.firstname }}</div>
+      </div>
+      <div class="label">
+        <div class="title">Last name:</div>
+        <div>{{ user.lastname }}</div>
+      </div>
+      <div class="label">
+        <div class="title">City :</div>
+        <div>{{ user.location }}</div>
+      </div>
+      <div class="label">
+        <div class="title">Email:</div>
+        <div>{{ user.email }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="friends_container">
+    <div class="friends_title">Viewer</div>
+    <div class="friends_list">
+      <ng-container *ngIf="viewer$ | async as viewer">
+        <div
+          *ngFor="let v of viewer; let i = index"
+          [viewer]="v"
+          app-viewer
+        ></div>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>

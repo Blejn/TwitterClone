@@ -1,0 +1,12 @@
+<div class="viewer_container">
+  <ngx-avatar
+    (click)="navigateToFriendId()"
+    size="50"
+    class="my-avatar"
+    value="{{ viewer.username.split('')[0] }}"
+  >
+  </ngx-avatar>
+  <div (click)="navigateToFriendId()" class="viewer_name">
+    {{ viewer.username }}
+  </div>
+</div>

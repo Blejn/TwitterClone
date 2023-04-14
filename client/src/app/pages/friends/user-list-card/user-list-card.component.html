@@ -1,0 +1,34 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      <ngx-avatar
+        size="50"
+        class="my-avatar"
+        value="{{ user.username.split('')[0] }}"
+      >
+      </ngx-avatar>
+      {{ user.username }}</mat-card-title
+    >
+    <mat-card-subtitle
+      >{{ user.firstname }} {{ user.lastname }}</mat-card-subtitle
+    >
+  </mat-card-header>
+  <mat-card-actions align="end">
+    <ng-template [ngIf]="isFollow">
+      <button color="primary" mat-button (click)="followUser()">
+        <mat-icon>person_add</mat-icon>Unollow
+      </button>
+    </ng-template>
+    <ng-template [ngIf]="!isFollow">
+      <button color="primary" mat-button (click)="followUser()">
+        <mat-icon>person_add</mat-icon>Follow
+      </button>
+    </ng-template>
+
+    <button (click)="navigateToFriendId()" color="primary" mat-button>
+      <mat-icon>vertical_split</mat-icon>
+      View details
+    </button>
+  </mat-card-actions>
+</mat-card>
+<br />

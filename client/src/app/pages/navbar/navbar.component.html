@@ -1,3 +1,41 @@
 <mat-toolbar color="primary">
-  <mat-toolbar-row class="title">POSTBLOG</mat-toolbar-row>
+  <mat-toolbar-row class="row">
+    <mat-toolbar-row (click)="navigation('/home')" class="title"
+      >POSTBLOG</mat-toolbar-row
+    >
+    <mat-slide-toggle></mat-slide-toggle>
+
+    <ng-container *ngIf="isUserLogged">
+      <button mat-icon-button [matMenuTriggerFor]="userMenu">
+        <ngx-avatar size="40" class="my-avatar" value="{{ avatarLogoLetter }}">
+        </ngx-avatar>
+      </button>
+    </ng-container>
+    <ng-container *ngIf="!isUserLogged">
+      <button (click)="navigation('/login')" mat-icon-button>Login</button>
+    </ng-container>
+  </mat-toolbar-row>
+
+  <mat-menu #userMenu="matMenu">
+    <button (click)="navigation('/home')" mat-menu-item>
+      <mat-icon>settings_applications</mat-icon>
+      <span>Home</span>
+    </button>
+    <button (click)="navigation('/friend/' + user.id)" mat-menu-item>
+      <mat-icon>settings_applications</mat-icon>
+      <span>My profile</span>
+    </button>
+    <button (click)="navigation('/friends')" mat-menu-item>
+      <mat-icon>accessibility_new</mat-icon>
+      <span>My friends</span>
+    </button>
+    <button (click)="navigation('/posts')" mat-menu-item>
+      <mat-icon>storage</mat-icon>
+      <span>Posts</span>
+    </button>
+    <button (click)="logout()" mat-menu-item>
+      <mat-icon>exit_to_app</mat-icon>
+      <span>Logout</span>
+    </button>
+  </mat-menu>
 </mat-toolbar>

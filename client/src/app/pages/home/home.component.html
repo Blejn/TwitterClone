@@ -1,1 +1,40 @@
-<button mat-raised-button color="primary"><mat-icon>thumb_up</mat-icon></button>
+<div class="container">
+  <div class="content_container">
+    <div class="left_container">
+      <div class="title_container">
+        <h1 class="title_text">Share with us what's on your mind</h1>
+        <p class="small_text">Share your thoughts with us...</p>
+        <div class="action_container">
+          <button (click)="goLoginpage()" mat-raised-button color="primary">
+            Create an account
+          </button>
+          -- or --
+          <button (click)="goLoginpage()" mat-raised-button color="primary">
+            Log in
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="right_container"></div>
+  </div>
+  <div class="social_container">
+    <div class="social_title">My Socials</div>
+    <div class="social_icons">
+      <img
+        src="/assets/images/facebook.png"
+        alt="facebook"
+        class="social_image"
+      />
+      <img
+        src="/assets/images/linkedin.png"
+        alt="linkedin"
+        class="social_image"
+      />
+      <img
+        src="/assets/images/instagram.png"
+        alt="instagram"
+        class="social_image"
+      />
+    </div>
+  </div>
+</div>

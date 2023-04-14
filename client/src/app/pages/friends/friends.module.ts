@@ -8,6 +8,7 @@ import { FriendsSectionComponent } from './friends-section/friends-section.compo
 import { FriendsComponent } from './friends.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UserListCardComponent } from './user-list-card/user-list-card.component';
+import { ViewerComponent } from './user-details/viewer/viewer.component';
 const avatarColors = ['#B8B8B8'];
 
 @NgModule({
@@ -17,6 +18,7 @@ const avatarColors = ['#B8B8B8'];
     AllUsersSectionComponent,
     UserDetailsComponent,
     UserListCardComponent,
+    ViewerComponent,
   ],
   imports: [
     CommonModule,

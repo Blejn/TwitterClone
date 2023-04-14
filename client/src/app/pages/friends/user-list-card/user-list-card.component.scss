@@ -1,5 +1,6 @@
 mat-card {
-  min-width: 250px;
+  min-width: 300px;
+  max-width: 350px;
   min-height: 100px;
 }
 mat-card-title {
@@ -8,4 +9,10 @@ mat-card-title {
   justify-content: flex-start;
   align-items: center;
   gap: 1rem;
+}
+mat-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }

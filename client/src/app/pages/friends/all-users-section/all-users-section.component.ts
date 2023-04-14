@@ -21,7 +21,5 @@ export class AllUsersSectionComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit(): void {
-    console.log(this.users);
-  }
+  ngOnInit(): void {}
 }

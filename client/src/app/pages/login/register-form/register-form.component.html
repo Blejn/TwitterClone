@@ -1,7 +1,7 @@
 <mat-card>
   <mat-card-title>Registration</mat-card-title>
   <mat-card-content>
-    <form [formGroup]="registerForm" (submit)="(registerHandler)">
+    <form [formGroup]="registerForm" (submit)="registerHandler()">
       <div>
         <mat-form-field>
           <input
@@ -12,6 +12,9 @@
             formControlName="username"
           />
         </mat-form-field>
+        <div *ngIf="registerForm.get('username')?.pending">
+          <mat-error color="warn"> Checking username </mat-error>
+        </div>
         <div
           *ngIf="
             registerForm.get('username')?.dirty &&
@@ -25,12 +28,18 @@
             <small *ngIf="registerForm.get('username')?.errors?.['minlength']"
               >Username has to min 3 elements</small
             >
+            <small
+              *ngIf="registerForm.get('username')?.getError('usernameExist')"
+              >Username already</small
+            >
           </mat-error>
         </div>
       </div>
+      <!-- PASSWORD -->
       <div>
         <mat-form-field>
           <input
+            emailValidation
             type="password"
             matInput
             placeholder="Password..."
@@ -49,6 +58,35 @@
             >
             <small *ngIf="registerForm.get('password')?.errors?.['minlength']"
               >password has to min 3 elements</small
+            >
+          </mat-error>
+        </div>
+      </div>
+      <!--Repeat Password -->
+      <div>
+        <mat-form-field>
+          <input
+            emailValidation
+            type="password"
+            matInput
+            placeholder="Repeat password..."
+            formControlName="repeatPassword"
+          />
+        </mat-form-field>
+        <div
+          *ngIf="
+            registerForm.get('repeatPassword')?.dirty &&
+            registerForm.get('repeatPassword')?.touched
+          "
+        >
+          <mat-error color="warn"
+            ><small
+              *ngIf="registerForm.get('repeatPassword')?.errors?.['required']"
+              >password is required</small
+            >
+            <small
+              *ngIf="registerForm.get('repeatPassword')?.errors?.['passwordNotMatch']"
+              >Passwords are not the same</small
             >
           </mat-error>
         </div>
@@ -94,13 +132,69 @@
         >
           <mat-error color="warn"
             ><small *ngIf="registerForm.get('lastname')?.errors?.['required']"
-              >password is required</small
+              >lastname is required</small
             >
           </mat-error>
         </div>
       </div>
       <!-- location -->
-
+      <div>
+        <mat-form-field>
+          <input
+            type="text"
+            matInput
+            placeholder="City..."
+            formControlName="location"
+          />
+        </mat-form-field>
+        <div
+          *ngIf="
+            registerForm.get('city')?.dirty && registerForm.get('city')?.touched
+          "
+        >
+          <mat-error color="warn"
+            ><small *ngIf="registerForm.get('city')?.errors?.['required']"
+              >City is required</small
+            >
+          </mat-error>
+        </div>
+      </div>
+      <!-- EMAIL -->
+      <div>
+        <mat-form-field>
+          <input
+            type="text"
+            matInput
+            placeholder="Email..."
+            formControlName="email"
+          />
+        </mat-form-field>
+        <div
+          *ngIf="
+            registerForm.get('email')?.dirty &&
+            registerForm.get('email')?.touched
+          "
+        >
+          <mat-error color="warn"
+            ><small *ngIf="registerForm.get('email')?.errors?.['required']"
+              >City is required</small
+            >
+          </mat-error>
+        </div>
+      </div>
+      <!--  -->
+      <!-- profilePicture -->
+      <div>
+        <mat-form-field>
+          <input
+            type="text"
+            matInput
+            placeholder="profile picture..."
+            formControlName="profile_picture"
+          />
+        </mat-form-field>
+      </div>
+      <!--  -->
       <div class="button">
         <button type="submit" mat-flat-button color="primary">
           Create an account

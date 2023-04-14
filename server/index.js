@@ -11,10 +11,12 @@ const authenticateToken = require("./middleware/authorization");
 // const { jwtToken } = require("./utils/jwt-token");
 dotenv.config();
 const jsonParser = bodyParser.json();
+
 //MIDDLEWARES
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
 const client = new Pool({
   user: "postgres",
   host: "localhost",
@@ -84,6 +86,18 @@ let jwtToken = ({ id, username, email }) => {
   });
   return { accessToken, refreshToken };
 };
+
+app.get("/users/:id", authenticateToken, async (req, res) => {
+  try {
+    let userId = req.params.id;
+    let userDetails = await client.query("SELECT * FROM users WHERE id = $1", [
+      userId,
+    ]);
+    res.status(200).json(userDetails.rows[0]);
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+});
 
 app.post("/auth/user/login", jsonParser, async (req, res) => {
   try {
@@ -261,8 +275,134 @@ app.post("/delete/refresh_token", (req, res) => {
   }
 });
 
+//GETTING FRIENDS
+app.post("/friends/:id/follow", async (req, res) => {
+  try {
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get("/", (req, res) => {
   res.send("Start app!");
+});
+
+app.delete("/users/delete", async (req, res) => {
+  try {
+    let response = await client.query(`DELETE  FROM users`);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+});
+
+//-------------------------------------follow users or unfollow user
+app.post("/users/viewer/:id", async (req, res) => {
+  try {
+    let currentUserId = req.body.id;
+    let userId = req.params.id;
+    let userDetails = await client.query("SELECT * FROM users WHERE id = $1", [
+      userId,
+    ]);
+    console.log(userDetails.rows[0]);
+
+    if (userDetails.rows[0]?.viewer.includes(currentUserId)) {
+      let addViewer = await client.query(
+        `UPDATE users set viewer = array_remove(viewer,$1) WHERE id=$2 `,
+        [currentUserId, userId]
+      );
+
+      let addObserver = await client.query(
+        `UPDATE users set observer = array_remove(observer,$1) WHERE id=$2 `,
+        [userId, currentUserId]
+      );
+
+      res.status(200).json({ viewer: addViewer, observer: addObserver });
+    } else {
+      let addViewer = await client.query(
+        `UPDATE users set viewer = array_append(viewer,$1) WHERE id=$2 `,
+        [currentUserId, userId]
+      );
+
+      let addObserver = await client.query(
+        `UPDATE users set observer = array_append(observer,$1) WHERE id=$2 `,
+        [userId, currentUserId]
+      );
+      res.status(200).json({ viewer: addViewer, observer: addObserver });
+    }
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+});
+
+app.post("/users/delete/viewer/:id", async (req, res) => {
+  try {
+    let currentUserId = req.body.id;
+    let userId = req.params.id;
+    //TUTAJ SPRADZANIE CZY PRZYPADKIEM JUZ NIE OBSERWUJEMY TEGO USERA
+
+    // TUTAJ DOŁĄCZANIE CURRENTUSERID DO TABLICY VIEWER
+    let addViewer = await client.query(
+      `UPDATE users set viewer = array_append(viewer,$1) WHERE id=$2 `,
+      [currentUserId, userId]
+    );
+
+    let addObserver = await client.query(
+      `UPDATE users set observer = array_append(observer,$1) WHERE id=$2 `,
+      [userId, currentUserId]
+    );
+    res.status(200).json({ viewer: addViewer, observer: addObserver });
+    res.status(200).json({});
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+});
+
+app.post("/specific", authenticateToken, async (req, res) => {
+  try {
+    var ids = req.body.ids;
+    let users = await client.query(
+      `SELECT * FROM users WHERE id = ANY($1::text[])`,
+      [ids]
+    );
+    res.status(200).json(users.rows);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+//---------------------------CREATING POSTS-----------------------------------------------------
+app.post("/createPost", authenticateToken, async (req, res) => {
+  try {
+    const id = uuidv4();
+    const username = req.body.username;
+    const location = req.body.location;
+    const description = req.body.description;
+    const photo = req.body.photo;
+    const userId = req.body.userId;
+    const comments = req.body.comments;
+    const reactions = req.body.reactions;
+    const shares = req.body.shares;
+    const views = req.body.views;
+    const newPost = await client.query(
+      `INSERT INTO "posts" (id,username,location,description,photo,userId,comments,reactions,shares,views) VALUES ( ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+      [
+        id,
+        username,
+        location,
+        description,
+        photo,
+        userId,
+        comments,
+        reactions,
+        shares,
+        views,
+      ]
+    );
+    res.status(200).json(newPost);
+  } catch (error) {
+    res.status(500).json({ message: "cannot create post" });
+  }
 });
 
 app.listen(3500, () => {
