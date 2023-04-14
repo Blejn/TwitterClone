@@ -14,9 +14,11 @@
   <div class="users_container">
     <mat-paginator
       class="pagination"
-      [length]="allElementsLength"
-      [pageSize]="3"
-      [pageSizeOptions]="[3, 6]"
+      pageIndex="0"
+      [length]="state.allElementsLength"
+      [pageSize]="state.pageSize"
+      [pageSizeOptions]="state.pageSizeOptions"
+      (page)="searchDataPagination($event)"
       aria-label="Select page"
     >
     </mat-paginator>
