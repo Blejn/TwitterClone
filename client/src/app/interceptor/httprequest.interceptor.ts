@@ -6,7 +6,7 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, empty, Observable } from 'rxjs';
+import { Observable, catchError, empty } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { CookieServiceService } from './../services/cookie-service.service';
 
@@ -25,7 +25,7 @@ export class HttprequestInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any | unknown>> {
     let authReq = request;
 
-    const token = this.cookieService;
+    const token = this.cookieService.getAccessToken();
     if (token !== null) {
       authReq = request.clone({
         setHeaders: {
