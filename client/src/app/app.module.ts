@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AvatarModule } from 'ngx-avatar';
+import { ToastrModule } from 'ngx-toastr';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FooterComponent } from './pages/footer/footer.component';
@@ -22,7 +23,6 @@ import { PostsRoutingModule } from './pages/posts/posts-routing.module';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { JWTTokenService } from './services/jwttoken.service';
 import { SharedModule } from './shared/shared.module';
-
 const avatarColors = ['#B8B8B8'];
 @NgModule({
   declarations: [
@@ -36,6 +36,7 @@ const avatarColors = ['#B8B8B8'];
   imports: [
     CommonModule,
     BrowserModule,
+
     SharedModule,
     LoginModule,
     LoginRoutingModule,
@@ -47,6 +48,7 @@ const avatarColors = ['#B8B8B8'];
       colors: avatarColors,
     }),
     BrowserAnimationsModule, // KOLEJNOŚĆ MA ZNACZNIE BO NP WCZYTA SIE INNY PATH NIZ POWINIEN
+    ToastrModule.forRoot(),
   ],
   providers: [
     JWTTokenService,
