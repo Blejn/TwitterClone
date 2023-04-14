@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { UserLogged } from '../interfaces/UserLogged';
 import { UserLogin } from '../interfaces/UserLogin';
 import { UserRegister } from '../interfaces/UserRegister';
 import { TokensType } from './../interfaces/TokensType';
@@ -16,14 +16,15 @@ import { JWTTokenService } from './jwttoken.service';
 })
 export class AuthService {
   private apiUrl = '/auth';
-  user$ = new BehaviorSubject<UserLogged | null>(null);
+  private _isLoggedIn = new BehaviorSubject<boolean>(false);
   session$ = new BehaviorSubject<TokensType | null>(null);
   private isAuthenticated!: boolean;
   constructor(
     private http: HttpClient,
     private jwtTokenService: JWTTokenService,
     private router: Router,
-    private cookieService: CookieServiceService
+    private cookieService: CookieServiceService,
+    private toastr: ToastrService
   ) {
     this.isUserLogged();
   }
@@ -35,9 +36,9 @@ export class AuthService {
 
   isUserLogged() {
     if (this.cookieService.getUserDetails() !== undefined) {
-      return true;
+      this._isLoggedIn.next(true);
     } else {
-      return false;
+      this._isLoggedIn.next(false);
     }
   }
   // FUNCTION FOR REGISTRATION
@@ -54,6 +55,9 @@ export class AuthService {
       environment.API_URL + this.apiUrl + '/all/usernames'
     );
   }
+  get isLoggedIn() {
+    return this._isLoggedIn.asObservable();
+  }
   login(data: UserLogin) {
     return this.http
       .post<UserLogin>(
@@ -66,12 +70,13 @@ export class AuthService {
       .subscribe((tokens: any) => {
         let user = this.jwtTokenService.decodeToken(tokens?.['refreshToken']);
         this.router.navigate(['/home']);
-        window.location.reload();
+        this._isLoggedIn.next(true);
+        this.isUserLogged();
 
         this.session$.next(tokens);
+        this.toastr.success('Login succesfully');
+
         // this.user$.next(user);
-        console.log(this.session$.getValue());
-        console.log(this.user$.getValue());
       });
   }
 
@@ -83,8 +88,9 @@ export class AuthService {
       .subscribe({
         next: (data: any) => {
           this.router.navigate(['/login']);
-          window.location.reload();
-          this.isAuthenticated === true;
+          this._isLoggedIn.next(false);
+          this.isUserLogged();
+          this.toastr.success('Logout succesfully');
         },
         error: (error) => {
           console.error(error);
