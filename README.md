@@ -1,6 +1,6 @@
-#POSTBLOG (TwitterClone)
+ # POSTBLOG 
 
- ##Installation resources
+ ## Installation resources
 
  - Install last node version from  ![node website](https://nodejs.org/en/download)
  - You can install ![nvm](https://github.com/coreybutler/nvm-windows#readme) to swtich on node version you want ( For my application you have to install 16.13.1)
