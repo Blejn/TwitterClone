@@ -4,8 +4,13 @@
 
 export const environment = {
   API_URL: 'http://localhost:3500',
-
+  API_COUNTRIES: 'https://api.countrystatecity.in/v1/countries',
+  API_KEY: 'X-CSCAPI-KEY',
   production: false,
+
+  CLOUD_NAME: 'doe12qx3f',
+  API_KEY_CLOUD: '589686272378283',
+  API_SECRET_CLOUD: 'Ef-EYk1b5kpHv0O1bhl3sL55bv0',
 };
 
 /*

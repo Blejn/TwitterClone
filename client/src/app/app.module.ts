@@ -10,6 +10,7 @@ import { PostsModule } from './pages/posts/posts.module';
 import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CloudinaryModule } from '@cloudinary/ng';
 import { AvatarModule } from 'ngx-avatar';
 import { ToastrModule } from 'ngx-toastr';
 import { AppRoutingModule } from './app-routing.module';
@@ -36,7 +37,6 @@ const avatarColors = ['#B8B8B8'];
   imports: [
     CommonModule,
     BrowserModule,
-
     SharedModule,
     LoginModule,
     LoginRoutingModule,
@@ -44,6 +44,7 @@ const avatarColors = ['#B8B8B8'];
     PostsRoutingModule,
     FriendsModule,
     AppRoutingModule,
+    CloudinaryModule,
     AvatarModule.forRoot({
       colors: avatarColors,
     }),

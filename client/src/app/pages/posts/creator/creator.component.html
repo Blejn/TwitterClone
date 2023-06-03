@@ -1,19 +1,46 @@
 <div class="creator_container">
-  <mat-card class="example-card">
-    <mat-card-header>
-      <div mat-card-avatar class="example-header-image">
-        <ngx-avatar size="50" class="my-avatar" value="B"> </ngx-avatar>
-      </div>
-      <mat-card-title>Blejn</mat-card-title>
-      <mat-card-subtitle>Location</mat-card-subtitle>
-    </mat-card-header>
-    <textarea class="creator_text" name="" id="" cols="30" rows="10"></textarea>
+  <form [formGroup]="postForm" action="" (submit)="addPost()">
+    <mat-card class="example-card">
+      <mat-card-header>
+        <div mat-card-avatar class="example-header-image">
+          <ngx-avatar size="50" class="my-avatar" value="B"> </ngx-avatar>
+        </div>
+        <mat-card-title>Blejn</mat-card-title>
+        <mat-card-subtitle>Location</mat-card-subtitle>
+      </mat-card-header>
+      <textarea
+        formControlName="description"
+        name="description"
+        class="creator_text"
+        id=""
+        cols="30"
+        rows="10"
+      ></textarea>
 
-    <mat-card-actions>
-      <button mat-button>Emoji</button>
-      <button mat-button>Location</button>
-      <button mat-button>Photo</button>
-      <button class="add_button" mat-raised-button color="primary">Add</button>
-    </mat-card-actions>
-  </mat-card>
+      <mat-card-actions>
+        <button (click)="changeVisibleEmoji()" mat-button>Emoji</button>
+
+        <button mat-button (click)="openNavigation()">Location</button>
+        <input
+          type="file"
+          mat-button
+          (change)="selectFile($event)"
+          accept="image/*"
+        />
+        <button submit class="add_button" mat-raised-button color="primary">
+          Add
+        </button>
+      </mat-card-actions>
+    </mat-card>
+    <emoji-mart
+      *ngIf="visibleEmoji"
+      title="Pick your emoji…"
+      emoji="point_up"
+      (emojiClick)="addEmoji($event)"
+      class="emoji"
+    ></emoji-mart>
+  </form>
 </div>
+<ng-container *ngIf="visibleMap"
+  ><app-map (backPage)="closeNavigation($event)"></app-map
+></ng-container>

@@ -15,6 +15,14 @@
   width: 80%;
   height: 35%;
 }
+.posts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+  gap: 20px;
+  width: 100%;
+}
 @media (min-width: 700px) {
   .posts_navbar {
     width: 600px;

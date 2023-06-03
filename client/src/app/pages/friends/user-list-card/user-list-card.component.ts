@@ -51,8 +51,12 @@ export class UserListCardComponent implements OnInit, AfterViewInit {
   //   return status;
   // }
   isFollowing() {
-    if (this.user.viewer.includes(this.cookieService.getUserId())) {
-      this.isFollow = true;
+    if (this.user.viewer && this.user.viewer.length) {
+      if (this.user.viewer.includes(this.cookieService.getUserId())) {
+        this.isFollow = true;
+      } else {
+        this.isFollow = false;
+      }
     } else {
       this.isFollow = false;
     }

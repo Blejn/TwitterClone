@@ -7,7 +7,11 @@ const dotenv = require("dotenv");
 const { v4: uuidv4 } = require("uuid");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const cloudinary = require("cloudinary").v2;
 const authenticateToken = require("./middleware/authorization");
+const asyncHandler = require("express-async-handler");
+const multer = require("multer");
+const fs = require("fs");
 // const { jwtToken } = require("./utils/jwt-token");
 dotenv.config();
 const jsonParser = bodyParser.json();
@@ -56,6 +60,15 @@ app.use((req, res, next) => {
 
   next();
 });
+
+cloudinary.config({
+  cloud_name: "doe12qx3f",
+  api_key: 589686272378283,
+  api_secret: "Ef-EYk1b5kpHv0O1bhl3sL55bv0",
+});
+const upload = multer({ dest: "uploads/" });
+
+//KONIEC KONFOGURACJi-----------------------------------------------------
 
 // app.use(
 //   bodyParser.urlencoded({
@@ -156,7 +169,7 @@ app.post("/auth/user/register", jsonParser, async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await client.query(
-      `INSERT INTO "users" (id, firstname, lastname, username, email, location, observer, viewer, posts, profile_picture, description, password, role) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,$13)`,
+      `INSERT INTO "users" (id, firstname, lastname, username, email, location, observer, viewer, posts, profile_picture, description, password, role) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
       [
         id,
         firstname,
@@ -372,37 +385,216 @@ app.post("/specific", authenticateToken, async (req, res) => {
 });
 
 //---------------------------CREATING POSTS-----------------------------------------------------
-app.post("/createPost", authenticateToken, async (req, res) => {
-  try {
-    const id = uuidv4();
-    const username = req.body.username;
-    const location = req.body.location;
-    const description = req.body.description;
-    const photo = req.body.photo;
-    const userId = req.body.userId;
-    const comments = req.body.comments;
-    const reactions = req.body.reactions;
-    const shares = req.body.shares;
-    const views = req.body.views;
-    const newPost = await client.query(
-      `INSERT INTO "posts" (id,username,location,description,photo,userId,comments,reactions,shares,views) VALUES ( ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
-      [
-        id,
-        username,
-        location,
-        description,
-        photo,
-        userId,
-        comments,
-        reactions,
-        shares,
-        views,
-      ]
-    );
-    res.status(200).json(newPost);
-  } catch (error) {
-    res.status(500).json({ message: "cannot create post" });
+app.post("/upload", upload.single("file"), (req, res) => {
+  const file = req.file;
+
+  cloudinary.uploader.upload(file.path, (error, result) => {
+    if (error) {
+      console.error("Błąd przesyłania pliku do Cloudinary:", error);
+      res
+        .status(500)
+        .json({ error: "Wystąpił błąd podczas przesyłania pliku." });
+    } else {
+      // Zwróć publiczną URL przesłanego obrazu z Cloudinary
+      res.json({ url: result.url });
+    }
+
+    // Usuń przesłany plik z serwera
+    fs.unlink(file.path, err => {
+      if (err) {
+        console.error("Błąd usuwania pliku:", err);
+      }
+    });
+  });
+});
+app.post(
+  "/createPost",
+  upload.single("file"),
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const file = req.file;
+
+      if (file) {
+        cloudinary.uploader.upload(file.path, (error, result) => {
+          if (error) {
+            console.error("Błąd przesyłania pliku do Cloudinary:", error);
+            return res
+              .status(500)
+              .json({ error: "Wystąpił błąd podczas przesyłania pliku." });
+          } else {
+            const photo = result.url;
+            const id = uuidv4();
+            const username = req.body.username;
+            const location = req.body.location;
+            const description = req.body.description;
+            const userid = req.body.userid;
+            const comments = [];
+            const reactions = [];
+            const shares = [];
+            const views = [];
+
+            // Wykonaj zapytanie do bazy danych
+            const newPost = client
+              .query(
+                `INSERT INTO "posts" (id, username, location, description, photo, userid, comments, reactions, shares, views) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+                [
+                  id,
+                  username,
+                  location,
+                  description,
+                  photo,
+                  userid,
+                  comments,
+                  reactions,
+                  shares,
+                  views,
+                ]
+              )
+              .then(() => {
+                // Usuń przesłany plik z serwera
+                fs.unlink(file.path, err => {
+                  if (err) {
+                    console.error("Błąd usuwania pliku:", err);
+                  }
+                });
+
+                // Zwróć odpowiedź
+                res.status(200).json(newPost);
+              })
+              .catch(error => {
+                throw error;
+              });
+          }
+        });
+      } else {
+        const id = uuidv4();
+        const username = req.body.username;
+        const location = req.body.location;
+        const description = req.body.description;
+        const userid = req.body.userid;
+        const comments = [];
+        const reactions = [];
+        const shares = [];
+        const views = [];
+
+        // Wykonaj zapytanie do bazy danych
+        const newPost = await client.query(
+          `INSERT INTO "posts" (id, username, location, description, photo, userid, comments, reactions, shares, views) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+          [
+            id,
+            username,
+            location,
+            description,
+            null,
+            userid,
+            comments,
+            reactions,
+            shares,
+            views,
+          ]
+        );
+
+        // Zwróć odpowiedź
+        res.status(200).json(newPost);
+      }
+    } catch (error) {
+      res.status(500).json({ message: `${error}` });
+    }
   }
+);
+//---------------------------Getting ALL POSTS-----------------------------------------------------
+
+app.get("/posts", authenticateToken, async (req, res) => {
+  try {
+    var page = parseInt(req.query.page);
+    var limit = parseInt(req.query.limit);
+    var startIndex = (page - 1) * limit;
+    var endIndex = page * limit;
+
+    let search = req.query.search;
+
+    if (!search) {
+      var response = await client.query("SELECT * FROM posts");
+    } else {
+      var response = await client.query(
+        "SELECT * FROM posts WHERE username = $1"
+      );
+    }
+    results = {};
+
+    if (endIndex < response.rows.length) {
+      results.next = {
+        page: page + 1,
+        limit: limit,
+      };
+    }
+    if (startIndex > 0) {
+      results.previous = {
+        page: page - 1,
+        limit: limit,
+      };
+    }
+    results.len = response.rows.length;
+    results.results = response.rows.slice(startIndex, endIndex);
+
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+});
+
+app.post("/posts/:postId/comments", (req, res) => {
+  const postId = req.params.postId;
+  const comment = req.body.comment;
+  const userId = req.body.userId;
+
+  // Sprawdź, czy istnieje post o podanym ID w bazie danych
+
+  // Jeśli post istnieje, dodaj komentarz do tablicy comments
+  const query = `UPDATE "posts" SET comments = array_append(comments, $1) WHERE id = $2`;
+  const values = [{ userId: userId, comment: comment }, postId];
+
+  // Wykonaj zapytanie do bazy danych, aby dodać komentarz do posta
+  client
+    .query(query, values)
+    .then(() => {
+      // Komentarz został dodany pomyślnie
+      res.status(200).json({ message: "Komentarz został dodany do posta" });
+    })
+    .catch(error => {
+      // Wystąpił błąd podczas dodawania komentarza
+      console.error("Błąd podczas dodawania komentarza:", error);
+      res
+        .status(500)
+        .json({ error: "Wystąpił błąd podczas dodawania komentarza" });
+    });
+});
+
+app.post("/posts/:postId/like", (req, res) => {
+  const postId = req.params.postId;
+  const userId = req.body.userId;
+
+  // Sprawdź, czy istnieje post o podanym ID w bazie danych
+
+  // Jeśli post istnieje, dodaj komentarz do tablicy comments
+  const query = `UPDATE "posts" SET comments = array_append(reactions, $1) WHERE id = $2`;
+  const values = [{ userId: userId }, postId];
+
+  // Wykonaj zapytanie do bazy danych, aby dodać komentarz do posta
+  client
+    .query(query, values)
+    .then(() => {
+      // Komentarz został dodany pomyślnie
+      res.status(200).json({ message: "Komentarz został dodany do posta" });
+    })
+    .catch(error => {
+      // Wystąpił błąd podczas dodawania komentarza
+      console.error("Błąd podczas dodawania komentarza:", error);
+      res
+        .status(500)
+        .json({ error: "Wystąpił błąd podczas dodawania komentarza" });
+    });
 });
 
 app.listen(3500, () => {

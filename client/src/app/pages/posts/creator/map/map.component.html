@@ -1,0 +1,21 @@
+<div class="absolute_container">
+  <div class="creator_map">
+    <mat-card class="example-card">
+      <mat-card-header>
+        <mat-card-title>Localization</mat-card-title>
+      </mat-card-header>
+      <google-map
+        height="300px"
+        width="400px"
+        [options]="options"
+        (mapClick)="moveMap($event)"
+      ></google-map>
+
+      <mat-card-content> </mat-card-content>
+      <mat-card-actions>
+        <button (click)="back()" mat-raised-button>BACK</button>
+        <button mat-raised-button color="primary">ACCEPT</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

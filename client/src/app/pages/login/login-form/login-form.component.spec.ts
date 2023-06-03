@@ -7,7 +7,7 @@ import { UserLogin } from 'src/app/interfaces/UserLogin';
 import { LoginFormComponent } from './login-form.component';
 
 let comp: LoginFormComponent;
-fdescribe('LoginFormComponent', () => {
+describe('LoginFormComponent', () => {
   let component: LoginFormComponent;
   let fixture: ComponentFixture<LoginFormComponent>;
 

@@ -1,0 +1,15 @@
+mat-card {
+  display: flex;
+  flex-direction: column;
+}
+mat-card-header {
+  .nav {
+    display: flex;
+    justify-content: space-between;
+  }
+  .date {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+}

@@ -1,1 +1,18 @@
-<p>posts-list works!</p>
+<ng-container *ngIf="posts.length; then post; else nothing"> </ng-container>
+
+<ng-template #post class="list_container">
+  <post *ngFor="let post of posts; index as i" [post]="post"></post>
+
+  <button
+    mat-flat-button
+    color="primary"
+    class="more_button"
+    (click)="loadMorePosts()"
+  >
+    Załaduj więcej
+  </button>
+</ng-template>
+
+<ng-template #nothing>
+  <h2>No posts...</h2>
+</ng-template>

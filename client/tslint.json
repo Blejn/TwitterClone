@@ -1,0 +1,9 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["codelyzer"],
+  "rulesDirectory": ["lint-rules"],
+  "rules": {},
+  "linterOptions": {
+    "exclude": ["node_modules/**"]
+  }
+}
