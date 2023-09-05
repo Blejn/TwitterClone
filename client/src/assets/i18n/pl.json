@@ -1,0 +1,26 @@
+{
+  "WELCOME": "Podziel się z nami tym, co zaprząta Ci głowę",
+  "REGISTER": "Zarejestruj się",
+  "LOGIN": "Zaloguj",
+  "JOIN": "Dołącz o nas...",
+  "OR": "lub",
+  "SOCIALS": "Moje Sociale",
+  "POSTS": {
+    "LOAD_MORE": "Załaduj więcej",
+    "NO_POSTS": "Brak postów...",
+    "LOCATION": "Lokalizacja",
+    "LOADING": "Ładowanie"
+  },
+  "PROFILE": {
+    "FIRST_NAME": "Imię",
+    "LAST_NAME": "Nazwisko",
+    "CITY": "Miasto",
+    "EMAIL": "Email",
+    "VIEWER": "Obserwujący"
+  },
+  "FRIENDS": {
+    "VIEW_DETAILS": "Zobacz szczegóły",
+    "FOLLOW": "Obserwuj",
+    "UNFOLLOW": "Odobserwuj"
+  }
+}
