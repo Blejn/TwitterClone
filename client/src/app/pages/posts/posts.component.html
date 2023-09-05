@@ -1,5 +1,8 @@
 <div class="posts_container">
   <div class="posts_navbar"><app-nav></app-nav></div>
-  <div class="posts_creator"><app-creator></app-creator></div>
-  <posts-list class="posts"></posts-list>
+  <div *ngIf="creatorPost" class="posts_creator">
+    <app-creator></app-creator>
+  </div>
+  <posts-list class="posts mat-app-background"></posts-list>
+  <button color="primary" class="creator_button" mat-button>New post</button>
 </div>
