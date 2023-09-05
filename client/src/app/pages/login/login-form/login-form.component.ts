@@ -5,10 +5,8 @@ import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject } from 'rxjs';
 import { UserLogin } from 'src/app/interfaces/UserLogin';
 import { AuthService } from 'src/app/services/auth.service';
-import { CookieServiceService } from 'src/app/services/cookie-service.service';
 import { TokensType } from './../../../interfaces/TokensType';
 import { UserLogged } from './../../../interfaces/UserLogged';
-import { JWTTokenService } from './../../../services/jwttoken.service';
 
 @Component({
   selector: 'app-login-form',
@@ -28,8 +26,6 @@ export class LoginFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private jwtTokenService: JWTTokenService,
-    private cookiesService: CookieServiceService,
     private toastr: ToastrService,
     private router: Router
   ) {}
@@ -56,6 +52,14 @@ export class LoginFormComponent implements OnInit {
 
   loginHandler() {
     const data = this.loginForm.getRawValue();
-    this.authService.login(data);
+    this.authService.login(data).subscribe((tokens: any) => {
+      this.router.navigate(['/home']);
+      this.authService._isLoggedIn.next(true);
+      this.authService.isUserLogged();
+      this.session$.next(tokens);
+      this.toastr.success('Login succesfully');
+
+      // this.user$.next(user);
+    });
   }
 }

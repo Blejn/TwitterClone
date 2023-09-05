@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { LoginRoutingModule } from './login-routing.module';
@@ -13,9 +12,9 @@ import { RegisterFormComponent } from './register-form/register-form.component';
   imports: [
     SharedModule,
     CommonModule,
-    BrowserModule,
     LoginRoutingModule,
     ReactiveFormsModule,
+    // StoreModule.forFeature('login', reducers),
   ],
   providers: [],
   bootstrap: [LoginComponent],
