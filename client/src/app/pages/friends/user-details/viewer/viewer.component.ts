@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Users } from 'src/app/interfaces/Users';
-import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: '[app-viewer]',
@@ -12,11 +11,9 @@ export class ViewerComponent implements OnInit {
   @Input()
   viewer!: Users;
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(private router: Router) {}
 
-  ngOnInit(): void {
-    console.log(this.viewer);
-  }
+  ngOnInit(): void {}
   navigateToFriendId() {
     this.router.navigate(['/friend/' + this.viewer.id]);
   }
