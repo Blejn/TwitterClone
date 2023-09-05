@@ -1,18 +1,26 @@
 <ng-container *ngIf="posts.length; then post; else nothing"> </ng-container>
 
 <ng-template #post class="list_container">
-  <post *ngFor="let post of posts; index as i" [post]="post"></post>
-
+  <post *ngFor="let post of posts; index as i" [post]="post" [@fadeIn]></post>
+  <h2 *ngIf="isLoading$ | async">
+    {{ "POSTS.LOADING" | translate }}
+  </h2>
   <button
+    *ngIf="!areMorePosts"
     mat-flat-button
     color="primary"
     class="more_button"
     (click)="loadMorePosts()"
   >
-    Załaduj więcej
+    {{ "POSTS.LOAD_MORE" | translate }}
   </button>
 </ng-template>
 
 <ng-template #nothing>
-  <h2>No posts...</h2>
+  <h2 *ngIf="isLoading$ | async">
+    {{ "POSTS.LOADING" | translate }}
+  </h2>
+  <h2>
+    {{ "POSTS.NO_POSTS" | translate }}
+  </h2>
 </ng-template>
