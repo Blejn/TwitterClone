@@ -8,4 +8,4 @@ const cloudinary = new Cloudinary({
     apiSecret: environment.API_SECRET_CLOUD,
   },
 });
-export const cloudinaryConfiguration = new Clo();
+export const cloudinaryConfiguration = new Cloudinary();
