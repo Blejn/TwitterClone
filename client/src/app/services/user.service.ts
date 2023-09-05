@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { EMPTY, Observable, catchError, empty, share, tap } from 'rxjs';
+import { EMPTY, Observable, catchError, empty, share } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { environment } from 'src/environments/environment';
 import { Data } from '../interfaces/Data';
@@ -55,7 +55,6 @@ export class UserService {
         }
       )
       .pipe(
-        tap((response) => console.log(currentUserId, friendId)),
         share(),
         catchError((error) => {
           if (error instanceof HttpErrorResponse) {
