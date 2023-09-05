@@ -2,15 +2,15 @@
   <div class="content_container">
     <div class="left_container">
       <div class="title_container">
-        <h1 class="title_text">Share with us what's on your mind</h1>
-        <p class="small_text">Share your thoughts with us...</p>
+        <h1 class="title_text">{{ "WELCOME" | translate }}</h1>
+        <p class="small_text">{{ "JOIN" | translate }}</p>
         <div class="action_container">
           <button (click)="goLoginpage()" mat-raised-button color="primary">
-            Create an account
+            {{ "REGISTER" | translate }}
           </button>
-          -- or --
+          -- {{ "OR" | translate }} --
           <button (click)="goLoginpage()" mat-raised-button color="primary">
-            Log in
+            {{ "LOGIN" | translate }}
           </button>
         </div>
       </div>
@@ -18,7 +18,7 @@
     <div class="right_container"></div>
   </div>
   <div class="social_container">
-    <div class="social_title">My Socials</div>
+    <div class="social_title">{{ "SOCIALS" | translate }}</div>
     <div class="social_icons">
       <img
         src="/assets/images/facebook.png"
