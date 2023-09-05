@@ -20,9 +20,7 @@ export function validateUsername(authService: AuthService) {
     const response = new Promise((resolve, reject) => {
       authService.getAllUsers().subscribe((usernames) => {
         notAllowed = [...usernames];
-
         setTimeout(() => {
-          console.log(notAllowed.includes(value));
           if (notAllowed.includes(value)) {
             resolve({ usernameExist: true });
           }

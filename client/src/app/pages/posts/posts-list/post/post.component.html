@@ -14,19 +14,90 @@
         <mat-card-subtitle>Location</mat-card-subtitle>
       </div>
       <div class="date">
-        <mat-card-subtitle class="creator_date">2 hours ago</mat-card-subtitle>
+        <mat-card-subtitle class="creator_date">{{
+          postDate()
+        }}</mat-card-subtitle>
       </div>
     </div>
   </mat-card-header>
-  <label for=""><div>BYłem dzisiaj na nartach</div></label>
+  <label for=""
+    ><div>{{ post.description }}</div></label
+  >
 
-  <img
-    mat-card-image
-    src="https://material.angular.io/assets/img/examples/shiba2.jpg"
-    alt="Photo of a Shiba Inu"
-  />
-  <mat-card-actions>
-    <button mat-button>Like</button>
-    <button mat-button>Comments</button>
+  <img mat-card-image src="{{ post.photo }}" alt="Photo of a Shiba Inu" />
+  <mat-card-actions class="bottom_actions">
+    <button
+      (click)="isReaction() ? removeReaction() : addReaction()"
+      mat-button
+      [color]="isReaction() ? 'accent' : 'primary'"
+    >
+      <mat-icon>thumb_up_alt</mat-icon>
+    </button>
+    <button (click)="viewPostComments()" color="primary" mat-button>
+      <mat-icon> comment</mat-icon>
+    </button>
+
+    <button
+      *ngIf="userDetails?.username === post.username"
+      mat-button
+      color="primary"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
   </mat-card-actions>
+
+  <mat-chip-list
+    [@expandCollapse]="viewComments ? 'open' : 'closed'"
+    *ngIf="viewComments"
+    class="mat-chip-list-stacked"
+    aria-label="Color selection"
+  >
+    <form
+      [formGroup]="newComment"
+      (ngSubmit)="onSubmit()"
+      class="add_comment_form"
+    >
+      <mat-form-field class="example-full-width">
+        <mat-label>Leave a comment</mat-label>
+        <textarea
+          matInput
+          placeholder="Ex. It makes me feel..."
+          formControlName="comment"
+        ></textarea>
+      </mat-form-field>
+      <button
+        type="submit"
+        mat-mini-fab
+        color="primary"
+        aria-label="Example icon button with a bookmark icon"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+    </form>
+    <ng-container
+      class="comments_section"
+      *ngIf="post.comments && post.comments.length != 0"
+    >
+      <mat-chip *ngFor="let comment of comments" selected [color]="'primary'">
+        <ngx-avatar
+          size="30"
+          class="my-avatar"
+          value="{{ comment.username.split('')[0] }}"
+        >
+        </ngx-avatar>
+        <div class="username_comment">{{ comment.username | titlecase }} :</div>
+
+        {{ comment.comment }}
+
+        <mat-icon *ngIf="isMyPost" class="trash">delete</mat-icon>
+        <button
+          class="trash_button"
+          *ngIf="userDetails?.username === comment.username"
+          mat-button
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-chip>
+    </ng-container>
+  </mat-chip-list>
 </mat-card>

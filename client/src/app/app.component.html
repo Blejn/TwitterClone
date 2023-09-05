@@ -1,11 +1,17 @@
-<div class="container_app">
-  <div class="behind_navbar">
+<div
+  [ngClass]="{ 'dark-theme': isDarkTheme | async }"
+  class="container_app dark-theme"
+>
+  <div class="behind_navbar mat-app-background">
     <div class="container_navbar">
       <app-navbar></app-navbar>
     </div>
   </div>
-  <div class="container_content">
-    <router-outlet></router-outlet>
+  <div class="container_content mat-app-background">
+    <router-outlet
+      (activate)="onActive($event)"
+      (deactivate)="onDeactive($event)"
+    ></router-outlet>
   </div>
   <div class="container_footer"></div>
 </div>

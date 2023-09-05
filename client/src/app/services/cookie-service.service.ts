@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { UserDetails } from '../interfaces/UserDetails';
 import { UserLogged } from '../interfaces/UserLogged';
 import { JWTTokenService } from './jwttoken.service';
 
@@ -13,14 +14,14 @@ export class CookieServiceService {
   // cookie = document.cookie?.['refresh_token'];
   constructor(private jwtService: JWTTokenService) {}
 
-  getUserDetails(cookies = document.cookie) {
+  getUserDetails(cookies = document.cookie): UserDetails | undefined {
     this.cookieStore = {};
     if (!!cookies === false) {
       return;
     }
     const cookiesArr = cookies.split(';');
     const values = cookiesArr[0].split('=');
-    return this.jwtService.decodeToken(values[1]);
+    return this.jwtService.decodeToken(values[1]) as UserDetails;
   }
 
   getUserId(cookies = document.cookie) {

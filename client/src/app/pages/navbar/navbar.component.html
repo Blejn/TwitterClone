@@ -3,7 +3,12 @@
     <mat-toolbar-row (click)="navigation('/home')" class="title"
       >POSTBLOG</mat-toolbar-row
     >
-    <mat-slide-toggle></mat-slide-toggle>
+
+    <mat-slide-toggle
+      color="accent"
+      [checked]="isDarkTheme | async"
+      (change)="toggleDarkTheme($event.checked)"
+    ></mat-slide-toggle>
 
     <ng-container *ngIf="isUserLogged">
       <button mat-icon-button [matMenuTriggerFor]="userMenu">
@@ -37,5 +42,22 @@
       <mat-icon>exit_to_app</mat-icon>
       <span>Logout</span>
     </button>
+
+    <mat-form-field>
+      <mat-select
+        [(ngModel)]="currentLanguageApp"
+        (ngModelChange)="switchLanguage()"
+      >
+        <mat-option
+          *ngFor="let language of languages"
+          [value]="language.language"
+        >
+          <h3>
+            {{ language.name + " "
+            }}<span class="fi fi-{{ language.languageValue }}"></span>
+          </h3>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </mat-menu>
 </mat-toolbar>

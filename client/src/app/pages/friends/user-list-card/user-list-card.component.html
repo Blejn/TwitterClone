@@ -16,18 +16,18 @@
   <mat-card-actions align="end">
     <ng-template [ngIf]="isFollow">
       <button color="primary" mat-button (click)="followUser()">
-        <mat-icon>person_add</mat-icon>Unollow
+        <mat-icon>person_add</mat-icon>{{ "FRIENDS.UNFOLLOW" | translate }}
       </button>
     </ng-template>
     <ng-template [ngIf]="!isFollow">
       <button color="primary" mat-button (click)="followUser()">
-        <mat-icon>person_add</mat-icon>Follow
+        <mat-icon>person_add</mat-icon>{{ "FRIENDS.FOLLOW" | translate }}
       </button>
     </ng-template>
 
     <button (click)="navigateToFriendId()" color="primary" mat-button>
       <mat-icon>vertical_split</mat-icon>
-      View details
+      {{ "FRIENDS.VIEW_DETAILS" | translate }}
     </button>
   </mat-card-actions>
 </mat-card>

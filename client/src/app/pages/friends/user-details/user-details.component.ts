@@ -11,8 +11,8 @@ import { Users } from './../../../interfaces/Users';
   styleUrls: ['./user-details.component.scss'],
 })
 export class UserDetailsComponent implements OnInit, AfterViewInit {
+  user!: Users;
   userId!: string | null;
-  user$!: Observable<Users>;
   viewer$!: Observable<Users[]>;
   users!: Users[];
 
@@ -23,10 +23,7 @@ export class UserDetailsComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.user$ = this.route.paramMap.pipe(
-      map((params: string | any) => params.get('id')),
-      switchMap((id) => this.userService.getUserProfile(id))
-    );
+    this.user = this.route.snapshot.data['details'];
     this.viewer$ = this.route.paramMap.pipe(
       map((params: string | any) => params.get('id')),
       switchMap((id) =>

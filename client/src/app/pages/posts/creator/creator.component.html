@@ -1,12 +1,14 @@
 <div class="creator_container">
-  <form [formGroup]="postForm" action="" (submit)="addPost()">
+  <form [formGroup]="postForm">
     <mat-card class="example-card">
       <mat-card-header>
         <div mat-card-avatar class="example-header-image">
           <ngx-avatar size="50" class="my-avatar" value="B"> </ngx-avatar>
         </div>
-        <mat-card-title>Blejn</mat-card-title>
-        <mat-card-subtitle>Location</mat-card-subtitle>
+        <mat-card-title>{{ userDetails.username }}</mat-card-title>
+        <mat-card-subtitle>{{
+          "POSTS.LOCATION" | translate
+        }}</mat-card-subtitle>
       </mat-card-header>
       <textarea
         formControlName="description"
@@ -18,19 +20,70 @@
       ></textarea>
 
       <mat-card-actions>
-        <button (click)="changeVisibleEmoji()" mat-button>Emoji</button>
+        <button color="primary" mat-button>
+          <mat-icon>photo_camera</mat-icon>
+        </button>
 
-        <button mat-button (click)="openNavigation()">Location</button>
+        <button (click)="changeVisibleEmoji()" mat-button>
+          <mat-icon color="primary">sentiment_satisfied</mat-icon>
+        </button>
+        <button mat-button (click)="openNavigation()">
+          <mat-icon color="primary"> map</mat-icon>
+        </button>
+        <!-- <mat-icon color="primary">file_copy</mat-icon> -->
         <input
+          #fileInput
+          class="input_for_upload"
           type="file"
           mat-button
-          (change)="selectFile($event)"
+          (change)="handleInputChange($event)"
           accept="image/*"
         />
-        <button submit class="add_button" mat-raised-button color="primary">
-          Add
+        <button
+          color="primary"
+          type="submit"
+          class="btn btn-danger btn-lg btn-block"
+          (click)="fileInput.click()"
+          mat-button
+        >
+          Upload Image
         </button>
       </mat-card-actions>
+      <div *ngIf="imageUrl" class="images_container">
+        <img *ngIf="imageUrl" [src]="imageUrl" class="image" />
+      </div>
+      <div *ngIf="!imageUrl" class="images_container">
+        <ngx-skeleton-loader
+          *ngIf="!imageUrl"
+          count="1"
+          appearance="line"
+          [theme]="{
+            'background-color': '#b8b8b8',
+            height: '600px',
+            width: '500px',
+            'border-radius': '10px'
+          }"
+        >
+        </ngx-skeleton-loader>
+      </div>
+
+      <button
+        type="submit"
+        class="add_button"
+        mat-raised-button
+        color="primary"
+        (click)="addPost()"
+      >
+        Add
+      </button>
+      <button
+        class="cancel_button"
+        mat-raised-button
+        color="primary"
+        (click)="cancel()"
+      >
+        Cancel
+      </button>
     </mat-card>
     <emoji-mart
       *ngIf="visibleEmoji"
@@ -41,6 +94,7 @@
     ></emoji-mart>
   </form>
 </div>
+
 <ng-container *ngIf="visibleMap"
   ><app-map (backPage)="closeNavigation($event)"></app-map
 ></ng-container>

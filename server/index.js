@@ -423,6 +423,7 @@ app.post(
               .status(500)
               .json({ error: "Wystąpił błąd podczas przesyłania pliku." });
           } else {
+            console.log(result);
             const photo = result.url;
             const id = uuidv4();
             const username = req.body.username;
@@ -433,11 +434,12 @@ app.post(
             const reactions = [];
             const shares = [];
             const views = [];
+            const date = req.body.date;
 
             // Wykonaj zapytanie do bazy danych
             const newPost = client
               .query(
-                `INSERT INTO "posts" (id, username, location, description, photo, userid, comments, reactions, shares, views) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+                `INSERT INTO "posts" (id, username, location, description, photo, userid, comments, reactions, shares, views,date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
                 [
                   id,
                   username,
@@ -449,6 +451,7 @@ app.post(
                   reactions,
                   shares,
                   views,
+                  date,
                 ]
               )
               .then(() => {
@@ -477,10 +480,11 @@ app.post(
         const reactions = [];
         const shares = [];
         const views = [];
+        const date = req.body.date;
 
         // Wykonaj zapytanie do bazy danych
         const newPost = await client.query(
-          `INSERT INTO "posts" (id, username, location, description, photo, userid, comments, reactions, shares, views) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+          `INSERT INTO "posts" (id, username, location, description, photo, userid, comments, reactions, shares, views, date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
           [
             id,
             username,
@@ -492,6 +496,7 @@ app.post(
             reactions,
             shares,
             views,
+            date,
           ]
         );
 
@@ -503,6 +508,15 @@ app.post(
     }
   }
 );
+//-----------------------------DELETE ALL POSTS--------------------
+app.delete("/posts/delete", async (req, res) => {
+  try {
+    let response = await client.query(`DELETE  FROM posts`);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+});
 //---------------------------Getting ALL POSTS-----------------------------------------------------
 
 app.get("/posts", authenticateToken, async (req, res) => {
@@ -529,12 +543,12 @@ app.get("/posts", authenticateToken, async (req, res) => {
         limit: limit,
       };
     }
-    if (startIndex > 0) {
-      results.previous = {
-        page: page - 1,
-        limit: limit,
-      };
-    }
+    // if (startIndex > 0) {
+    //   results.previous = {
+    //     page: page - 1,
+    //     limit: limit,
+    //   };
+    // }
     results.len = response.rows.length;
     results.results = response.rows.slice(startIndex, endIndex);
 
@@ -543,17 +557,63 @@ app.get("/posts", authenticateToken, async (req, res) => {
     res.status(500).json(error.message);
   }
 });
-
+//ADD COMMMENTS---------------------------------------------------------------------
 app.post("/posts/:postId/comments", (req, res) => {
   const postId = req.params.postId;
   const comment = req.body.comment;
   const userId = req.body.userId;
+  const username = req.body.username;
+  const id = req.body.id;
 
   // Sprawdź, czy istnieje post o podanym ID w bazie danych
 
   // Jeśli post istnieje, dodaj komentarz do tablicy comments
   const query = `UPDATE "posts" SET comments = array_append(comments, $1) WHERE id = $2`;
-  const values = [{ userId: userId, comment: comment }, postId];
+  const values = [
+    {
+      id: id,
+      userId: userId,
+      username: username,
+      comment: comment,
+    },
+    postId,
+  ];
+  // Wykonaj zapytanie do bazy danych, aby dodać komentarz do posta
+  client
+    .query(query, values)
+    .then(() => {
+      // Komentarz został dodany pomyślnie
+      res.status(200).json({ message: "Komentarz został dodany do posta" });
+    })
+    .catch(error => {
+      // Wystąpił błąd podczas dodawania komentarza
+      console.error("Błąd podczas dodawania komentarza:", error);
+      res
+        .status(500)
+        .json({ error: "Wystąpił błąd podczas dodawania komentarza" });
+    });
+});
+//USUWANIE KOMENTARZA--------------------------------
+app.post("/posts/:postId/removeComment", (req, res) => {
+  const postId = req.params.postId;
+  const comment = req.body.comment;
+  const userId = req.body.userId;
+  const username = req.body.username;
+  const id = req.body.id;
+
+  // Sprawdź, czy istnieje post o podanym ID w bazie danych
+
+  // Jeśli post istnieje, dodaj komentarz do tablicy comments
+  const query = `UPDATE "posts" SET comments = array_remove(comments, $1) WHERE id = $2`;
+  const values = [
+    {
+      id: id,
+      userId: userId,
+      username: username,
+      comment: comment,
+    },
+    postId,
+  ];
 
   // Wykonaj zapytanie do bazy danych, aby dodać komentarz do posta
   client
@@ -571,29 +631,52 @@ app.post("/posts/:postId/comments", (req, res) => {
     });
 });
 
-app.post("/posts/:postId/like", (req, res) => {
-  const postId = req.params.postId;
+//DODAWANIE REAKCJI-----------------------------------------------------------------------------------------------------------
+app.post("/posts/:id/like", (req, res) => {
+  const postId = req.params.id;
   const userId = req.body.userId;
 
   // Sprawdź, czy istnieje post o podanym ID w bazie danych
 
   // Jeśli post istnieje, dodaj komentarz do tablicy comments
-  const query = `UPDATE "posts" SET comments = array_append(reactions, $1) WHERE id = $2`;
-  const values = [{ userId: userId }, postId];
+  const query = `UPDATE posts set reactions  = array_append(reactions, $1) WHERE id = $2`;
+  const values = [userId, postId];
 
   // Wykonaj zapytanie do bazy danych, aby dodać komentarz do posta
   client
     .query(query, values)
     .then(() => {
       // Komentarz został dodany pomyślnie
-      res.status(200).json({ message: "Komentarz został dodany do posta" });
+      res.status(200).json({ message: "Dodano reakcje do posta" });
     })
     .catch(error => {
       // Wystąpił błąd podczas dodawania komentarza
       console.error("Błąd podczas dodawania komentarza:", error);
-      res
-        .status(500)
-        .json({ error: "Wystąpił błąd podczas dodawania komentarza" });
+      res.status(500).json({ error: "Wystąpił błąd podczas usuwania reakcji" });
+    });
+});
+//USUWANIE REAKCJI-----------------------------------------------------------------------------------------------------------
+app.post("/posts/:postId/dislike", (req, res) => {
+  const postId = req.params.postId;
+  const userId = req.body.userId;
+
+  // Sprawdź, czy istnieje post o podanym ID w bazie danych
+
+  // Jeśli post istnieje, dodaj komentarz do tablicy comments
+  const query = `UPDATE posts set reactions  = array_remove(reactions, $1) WHERE id = $2`;
+  const values = [userId, postId];
+
+  // Wykonaj zapytanie do bazy danych, aby dodać komentarz do posta
+  client
+    .query(query, values)
+    .then(() => {
+      // Komentarz został dodany pomyślnie
+      res.status(200).json({ message: "Usunięto reakcje z posta" });
+    })
+    .catch(error => {
+      // Wystąpił błąd podczas dodawania komentarza
+      console.error("Błąd podczas usuwania reakcji:", error);
+      res.status(500).json({ error: "Wystąpił błąd podczas usuwania reakcji" });
     });
 });
 

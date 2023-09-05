@@ -1,0 +1,26 @@
+{
+  "WELCOME": "Share with us what's on your mind",
+  "REGISTER": "Create an account",
+  "LOGIN": "Log in",
+  "JOIN": "Join to us...",
+  "OR": "or",
+  "SOCIALS": "My Socials",
+  "POSTS": {
+    "LOAD_MORE": "Load more",
+    "NO_POSTS": "No posts...",
+    "LOCATION": "Localization",
+    "LOADING": "Loading"
+  },
+  "PROFILE": {
+    "FIRST_NAME": "First name",
+    "LAST_NAME": "Last name",
+    "CITY": "City",
+    "EMAIL": "Email",
+    "VIEWER": "Viewer"
+  },
+  "FRIENDS": {
+    "VIEW_DETAILS": "View Details",
+    "FOLLOW": "Follow",
+    "UNFOLLOW": "Unfollow"
+  }
+}

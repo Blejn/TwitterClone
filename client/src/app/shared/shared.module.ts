@@ -23,6 +23,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatSelectModule } from '@angular/material/select';
+
 @NgModule({
   declarations: [],
   imports: [CommonModule],
@@ -47,7 +50,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatDatepickerModule,
     MatCheckboxModule,
     MatSlideToggleModule,
-
+    MatSelectModule,
+    MatChipsModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
