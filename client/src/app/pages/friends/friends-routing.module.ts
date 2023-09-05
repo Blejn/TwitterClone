@@ -2,14 +2,19 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { FriendsComponent } from './friends.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
+import { UserDetailsResolve } from './user-details/user-details.resolve';
 const routes: Routes = [
   {
-    path: 'friends',
+    path: '',
     component: FriendsComponent,
+    children: [],
   },
   {
     path: 'friend/:id',
     component: UserDetailsComponent,
+    resolve: {
+      details: UserDetailsResolve,
+    },
   },
 ];
 
