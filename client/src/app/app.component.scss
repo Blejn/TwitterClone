@@ -7,15 +7,16 @@
 .behind_navbar {
   position: relative;
   width: 100%;
-  height: 10%;
+  height: 6%;
 }
 .container_navbar {
   position: fixed;
   width: 100%;
-  height: 10%;
+  height: 6%;
   z-index: 1000;
 }
 .container_content {
+  margin-top: 10px;
   width: 100%;
   height: 90%;
 }

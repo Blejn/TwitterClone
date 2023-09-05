@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -7,14 +10,23 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  constructor(private router: Router) {}
+  isDarkTheme!: Observable<boolean>;
+  constructor(
+    private router: Router,
+    private themeService: ThemeService,
+    private translate: TranslateService
+  ) {
+    this.translate.setDefaultLang('en');
+  }
   title = 'client';
 
   ngOnInit(): void {
-    // this.router.events
-    //   .pipe(filter((event) => event instanceof NavigationEnd))
-    //   .subscribe((event) => {
-    //     console.log(event);
-    //   });
+    this.isDarkTheme = this.themeService.isDarkTheme;
+  }
+  onActive(event: any) {
+    console.log('activate', event);
+  }
+  onDeactive(event: any) {
+    console.log('deactive', event);
   }
 }

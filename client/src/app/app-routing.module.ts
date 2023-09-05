@@ -1,9 +1,19 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
+import {
+  PreloadingStrategy,
+  Route,
+  RouterModule,
+  Routes,
+} from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { AuthGuard } from './guards/auth.guard';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
-import { ProfileComponent } from './pages/profile/profile.component';
-
+export class CustomPreload implements PreloadingStrategy {
+  preload(route: Route, fn: () => Observable<any>): Observable<any> {
+    console.log(route.data);
+    return route.data && route.data['preload'] ? fn() : of(null);
+  }
+}
 const routes: Routes = [
   {
     path: '',
@@ -12,12 +22,25 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    component: HomeComponent,
+    loadChildren: () =>
+      import('./pages/home/home.module').then((m) => m.HomeModule),
   },
-
   {
-    path: 'profile',
-    component: ProfileComponent,
+    path: 'posts',
+    data: { preload: false },
+    canLoad: [AuthGuard],
+    loadChildren: () =>
+      import('./pages/posts/posts.module').then((m) => m.PostsModule),
+  },
+  {
+    path: 'login',
+    loadChildren: () =>
+      import('./pages/login/login.module').then((m) => m.LoginModule),
+  },
+  {
+    path: 'friends',
+    loadChildren: () =>
+      import('./pages/friends/friends.module').then((m) => m.FriendsModule),
   },
   {
     path: 'not-found',
@@ -33,6 +56,7 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {
+      preloadingStrategy: CustomPreload,
       // enableTracing: true, //do opcji debugowania,
       // initialNavigation: 'disabled',
       //czy router ma sie na starcie uruchomić
@@ -41,5 +65,6 @@ const routes: Routes = [
     }),
   ],
   exports: [RouterModule],
+  providers: [CustomPreload],
 })
 export class AppRoutingModule {}
