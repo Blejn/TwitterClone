@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { UserLogin } from '../interfaces/UserLogin';
 import { UserRegister } from '../interfaces/UserRegister';
@@ -66,14 +66,18 @@ export class AuthService implements OnInit {
     return this._isLoggedIn.asObservable();
   }
 
-  login(data: UserLogin) {
-    return this.http.post<UserLogin>(
-      environment.API_URL + this.apiUrl + '/user/login',
-      data,
-      {
-        withCredentials: true,
-      }
-    );
+  login(
+    data: UserLogin
+  ): Observable<{ accessToken: string; refreshToken: string }> {
+    return this.http
+      .post<{ accessToken: string; refreshToken: string }>(
+        environment.API_URL + this.apiUrl + '/user/login',
+        data,
+        {
+          withCredentials: true,
+        }
+      )
+      .pipe(tap((res) => console.log(res)));
   }
 
   logout() {

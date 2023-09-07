@@ -15,8 +15,13 @@ export class LoginEffects {
         this.authService
           .login({ username: action.username, password: action.password })
           .pipe(
-            map((user) => LoginActions.loginSuccess()),
-            catchError((error) => of(LoginActions.loginFailed()))
+            map(({ accessToken, refreshToken }) =>
+              LoginActions.loginSuccess({
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+              })
+            ),
+            catchError((error) => of(LoginActions.loginFailure(error)))
           )
       )
     )
