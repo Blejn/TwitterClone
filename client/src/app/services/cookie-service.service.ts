@@ -14,10 +14,29 @@ export class CookieServiceService {
   // cookie = document.cookie?.['refresh_token'];
   constructor(private jwtService: JWTTokenService) {}
 
-  getUserDetails(cookies = document.cookie): UserDetails | undefined {
+  getTokens(): any {
+    const cookies = document.cookie.split(';').map((cookie) => cookie.trim());
+    let accessToken = null;
+    let refreshToken = null;
+
+    for (const cookie of cookies) {
+      const [name, value] = cookie
+        .split('=')
+        .map((cookiePart) => cookiePart.trim());
+      if (name == 'access_token') {
+        accessToken = value;
+      }
+      if (name == 'refresh_token') {
+        refreshToken = value;
+      }
+    }
+    return { accessToken, refreshToken };
+  }
+
+  getUserDetails(cookies = document.cookie): UserDetails | null {
     this.cookieStore = {};
     if (!!cookies === false) {
-      return;
+      return null;
     }
     const cookiesArr = cookies.split(';');
     const values = cookiesArr[0].split('=');

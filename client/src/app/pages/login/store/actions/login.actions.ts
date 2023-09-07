@@ -4,13 +4,13 @@ export const login = createAction(
   '[Auth] Login',
   props<{ username: string; password: string }>()
 );
-export const loginSuccess = createAction(
-  '[Auth] Login success',
 
-  props<{ user: any }>
+export const loginSuccess = createAction(
+  '[Auth] Login Success',
+  props<{ accessToken: string; refreshToken: string }>()
 );
 
-export const loginFailed = createAction(
-  '[Auth] Login failed',
-  props<{ error: string }>
+export const loginFailure = createAction(
+  '[Auth] Login Failure',
+  props<{ error: string }>()
 );

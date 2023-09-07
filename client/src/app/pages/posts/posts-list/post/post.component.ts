@@ -46,7 +46,7 @@ import { Comment } from './../../../../interfaces/Comment';
 export class PostComponent implements OnInit, AfterContentInit {
   @Input()
   post!: Post;
-  userDetails!: UserDetails | undefined;
+  userDetails!: UserDetails | null;
   userId!: string;
   newComment!: FormGroup;
   viewComments: boolean = false;

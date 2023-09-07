@@ -1,12 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject } from 'rxjs';
 import { UserLogin } from 'src/app/interfaces/UserLogin';
+import { AppState } from 'src/app/interfaces/states/AppState';
 import { AuthService } from 'src/app/services/auth.service';
 import { TokensType } from './../../../interfaces/TokensType';
 import { UserLogged } from './../../../interfaces/UserLogged';
+import { login } from './../store/actions/login.actions';
 
 @Component({
   selector: 'app-login-form',
@@ -27,7 +30,8 @@ export class LoginFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private toastr: ToastrService,
-    private router: Router
+    private router: Router,
+    private store: Store<AppState>
   ) {}
 
   ngOnInit(): void {
@@ -53,13 +57,12 @@ export class LoginFormComponent implements OnInit {
   loginHandler() {
     const data = this.loginForm.getRawValue();
     this.authService.login(data).subscribe((tokens: any) => {
+      this.store.dispatch(login(data));
       this.router.navigate(['/home']);
       this.authService._isLoggedIn.next(true);
       this.authService.isUserLogged();
       this.session$.next(tokens);
       this.toastr.success('Login succesfully');
-
-      // this.user$.next(user);
     });
   }
 }
