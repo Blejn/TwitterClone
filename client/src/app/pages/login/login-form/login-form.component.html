@@ -54,7 +54,14 @@
         </div>
       </div>
       <div class="button">
-        <button type="submit" mat-flat-button color="primary">Login</button>
+        <button
+          [disabled]="loginForm.invalid"
+          type="submit"
+          mat-flat-button
+          color="primary"
+        >
+          Login
+        </button>
       </div>
       <div class="info">
         <small>You don't have an account</small>
