@@ -1,6 +1,7 @@
 import { UserDetails } from '../UserDetails';
 
 export interface AuthStateInterface {
+  message: '';
   isLoading: boolean;
   isLoggedin: boolean;
   userInfo: UserDetails | null;
