@@ -9,6 +9,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { CookieServiceService } from 'src/app/services/cookie-service.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { setLanguage } from 'src/app/store/actions/language.actions';
+import { userInfo, userLoggedIn } from '../login/store/selectors/auth.selector';
 import { UserLogged } from './../../interfaces/UserLogged';
 import { currentLanguage } from './../../store/selectors/language.selector';
 
@@ -19,6 +20,8 @@ import { currentLanguage } from './../../store/selectors/language.selector';
 })
 export class NavbarComponent implements OnInit {
   currentLanguage$ = this.store.select(currentLanguage);
+  auth$ = this.store.select(userLoggedIn);
+  currentuserInfo$ = this.store.select(userInfo);
   // private user_request!: Observable<UserLogged | null>;
   @Output() darkMode = new EventEmitter<boolean>();
   isDarkTheme!: Observable<boolean>;
@@ -29,6 +32,7 @@ export class NavbarComponent implements OnInit {
     id: '',
     username: '',
     email: '',
+    profile_picture: '',
   };
   currentLanguageApp!: string;
   languages: Languages[] = [
@@ -61,12 +65,19 @@ export class NavbarComponent implements OnInit {
   }
 
   getUserLogged() {
-    if (this.isUserLogged) {
-      this.user = Object.assign(this.user, this.cookieService.getUserDetails());
-      this.avatarLogoLetter = this.user.username.split('')[0];
-    } else {
-      return;
-    }
+    this.auth$.subscribe((res) => {
+      if (res) {
+        this.currentuserInfo$.subscribe(
+          ({ username, email, profile_picture, id }: any) => {
+            Object.assign(this.user, { username, email, profile_picture, id });
+          }
+        );
+
+        this.avatarLogoLetter = this.user.username.split('')[0];
+      } else {
+        return;
+      }
+    });
   }
 
   changeMode() {
