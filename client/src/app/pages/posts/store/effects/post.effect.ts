@@ -49,7 +49,6 @@ export class PostEffects {
         return this.postService
           .addReactionToPost(action.userId, action.postId)
           .pipe(
-            tap((res) => console.log(res)),
             map(() =>
               PostsActions.addReactionSuccessed({
                 postId: action.postId,
