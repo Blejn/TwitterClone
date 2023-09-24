@@ -21,6 +21,29 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
+const corsOptions = {
+  // origin: [
+  //   "http://localhost:3500",
+  //   "http://localhost:3000",
+  //   "http://localhost:4200",
+  //   "http://localhost:5000",
+  // ],
+  origin: "http://localhost:4200",
+  credentials: true,
+};
+app.use(cors(corsOptions));
+app.use(function (req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+app.use(function (req, res, next) {
+  res.setHeader("Cross-Origin-Resource-Policy", "same-site");
+  next();
+});
 const client = new Pool({
   user: "postgres",
   host: "localhost",
@@ -34,31 +57,6 @@ client.connect(err => {
     return;
   }
   console.log("Database connected");
-});
-
-const corsOptions = {
-  origin: [
-    "http://localhost:3500",
-    "http://localhost:3000",
-    "http://localhost:4200",
-    "http://localhost:5000",
-  ],
-  credentials: true,
-};
-app.use(cors(corsOptions));
-app.use(function (req, res, next) {
-  res.setHeader("Cross-Origin-Resource-Policy", "same-site");
-  next();
-});
-app.use((req, res, next) => {
-  res.set({
-    // "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "*",
-    "Access-Control-Allow-Headers":
-      "'Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token'",
-  });
-
-  next();
 });
 
 cloudinary.config({
@@ -89,8 +87,8 @@ app.get("/auth/all/usernames", jsonParser, async (req, res) => {
   }
 });
 //LOGIN
-let jwtToken = ({ id, username, email }) => {
-  const user = { id, username, email };
+let jwtToken = ({ id, username, email, profile_picture }) => {
+  const user = { id, username, email, profile_picture };
   const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "10h",
   });
@@ -112,27 +110,50 @@ app.get("/users/:id", authenticateToken, async (req, res) => {
   }
 });
 
-app.post("/auth/user/login", jsonParser, async (req, res) => {
+app.use((err, req, res, next) => {
+  res.status(500).json({ error: "Internal server error." });
+});
+
+app.post("/auth/user/login", jsonParser, async (req, res, next) => {
   try {
-    const username = req.body.username;
-    const password = req.body.password;
+    const { username, password } = req.body;
+
+    // Sprawdzenie poprawności danych wejściowych
+    if (!username || !password) {
+      return res
+        .status(400)
+        .send({ error: "Both username and password are required." });
+    }
+
     const user = await client.query(`SELECT * FROM users WHERE username = $1`, [
       username,
     ]);
-    if (user.rows.length === 0)
-      return res.status(401).json({ error: "Email is incorrect" });
-    const validPassword = await bcrypt.compare(password, user.rows[0].password);
-    if (!validPassword) {
-      res.status(401).json({ error: "Incorrect password" });
+    console.log(user.rows);
+    if (user.rows.length === 0) {
+      return res.status(401).send({ error: "Username is incorrect." });
     }
+
+    // Porównanie hasła
+    const validPassword = await bcrypt.compare(password, user.rows[0].password);
+
+    if (!validPassword) {
+      return res.status(401).send({ error: "Incorrect password." });
+    }
+
+    // Utworzenie tokenów JWT
     let currentUser = {
       id: user.rows[0].id,
       username: user.rows[0].username,
       email: user.rows[0].email,
+      profile_picture: user.rows[0].profile_picture
+        ? user.rows[0].profile_picture
+        : null,
     };
+    console.log(currentUser);
 
     let tokens = jwtToken(currentUser);
 
+    // Zabezpieczenia plików cookie
     res.cookie("refresh_token", tokens.refreshToken, {
       // httpOnly: true,
       // sameSite: "none",
@@ -143,54 +164,132 @@ app.post("/auth/user/login", jsonParser, async (req, res) => {
       // httpOnly: true,
       // sameSite: "none",
       // secure: true,
-    }); //będzie dostępny token tylko po stronie serwera
+    });
+
     res.status(200).json(tokens);
   } catch (error) {
-    res.status(500).json(error.message);
+    next(error);
   }
 });
+
+// St
+
 //Register
-app.post("/auth/user/register", jsonParser, async (req, res) => {
-  try {
-    const id = uuidv4();
-    const firstname = req.body.firstname;
-    const lastname = req.body.lastname;
-    const username = req.body.username;
-    const email = req.body.email;
-    const location = req.body.location;
-    const password = req.body.password;
-    const observer = req.body.observer;
-    const viewer = req.body.viewer;
-    const posts = req.body.posts;
-    const profile_picture = req.body.profile_picture;
-    const description = req.body.description;
-    const role = "USER";
+app.post(
+  "/auth/user/register",
+  jsonParser,
+  upload.single("profile_picture"),
+  async (req, res) => {
+    try {
+      const file = req.file ? req.file : null;
+      const usernames = await client.query(`SELECT username FROM users`);
+      const usernameObject = usernames.rows;
+      const usernameExists = usernameObject.some(
+        nameObj => nameObj.username === req.body.username
+      );
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+      if (usernameExists) {
+        return res.status(401).send("username already exists");
+      }
 
-    const newUser = await client.query(
-      `INSERT INTO "users" (id, firstname, lastname, username, email, location, observer, viewer, posts, profile_picture, description, password, role) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
-      [
-        id,
-        firstname,
-        lastname,
-        username,
-        email,
-        location,
-        observer,
-        viewer,
-        posts,
-        profile_picture,
-        description,
-        hashedPassword,
-        role,
-      ]
-    );
-    res.status(200).json(newUser);
-  } catch (err) {
-    res.status(500).json(err.message);
+      if (file != null) {
+        cloudinary.uploader.upload(file.path, async (error, result) => {
+          if (error) {
+            console.error("Błąd przesyłania pliku do Cloudinary:", error);
+            return res
+              .status(500)
+              .json({ error: "Wystąpił błąd podczas przesyłania pliku." });
+          } else {
+            const id = uuidv4();
+            const firstname = req.body.firstname;
+            const lastname = req.body.lastname;
+            const username = req.body.username;
+            const email = req.body.email;
+            const location = req.body.location;
+            const password = req.body.password;
+            const observer = req.body.observer;
+            const viewer = req.body.viewer;
+            const posts = req.body.posts;
+            const profile_picture = result.url;
+            const description = req.body.description;
+            const role = "USER";
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            const newUser = await client.query(
+              `INSERT INTO "users" (id, firstname, lastname, username, email, location, observer, viewer, posts, profile_picture, description, password, role) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+              [
+                id,
+                firstname,
+                lastname,
+                username,
+                email,
+                location,
+                observer,
+                viewer,
+                posts,
+                profile_picture,
+                description,
+                hashedPassword,
+                role,
+              ]
+            );
+
+            // Usuń przesłany plik z serwera
+            fs.unlink(file.path, err => {
+              if (err) {
+                console.error("Błąd usuwania pliku:", err);
+              }
+            });
+
+            return res
+              .status(200)
+              .json({ message: "new user successfully created" });
+          }
+        });
+      } else {
+        const id = uuidv4();
+        const firstname = req.body.firstname;
+        const lastname = req.body.lastname;
+        const username = req.body.username;
+        const email = req.body.email;
+        const location = req.body.location;
+        const password = req.body.password;
+        const observer = req.body.observer;
+        const viewer = req.body.viewer;
+        const posts = req.body.posts;
+        const profile_picture = req.body.profile_picture;
+        const description = req.body.description;
+        const role = "USER";
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = await client.query(
+          `INSERT INTO "users" (id, firstname, lastname, username, email, location, observer, viewer, posts, profile_picture, description, password, role) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+          [
+            id,
+            firstname,
+            lastname,
+            username,
+            email,
+            location,
+            observer,
+            viewer,
+            posts,
+            profile_picture,
+            description,
+            hashedPassword,
+            role,
+          ]
+        );
+
+        return res
+          .status(200)
+          .json({ message: "new user successfully created" });
+      }
+    } catch (err) {
+      return res.status(500).send(err.message);
+    }
   }
-});
+);
 
 //GET ALL USERS
 app.get("/users", authenticateToken, async (req, res) => {

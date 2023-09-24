@@ -184,19 +184,19 @@
       </div>
       <!--  -->
       <!-- profilePicture -->
-      <div>
-        <mat-form-field>
-          <input
-            type="text"
-            matInput
-            placeholder="profile picture..."
-            formControlName="profile_picture"
-          />
-        </mat-form-field>
-      </div>
+
+      <app-avatar-upload
+        [pictureProfile]="registerForm.get('profile_picture')"
+      ></app-avatar-upload>
+
       <!--  -->
       <div class="button">
-        <button type="submit" mat-flat-button color="primary">
+        <button
+          [disabled]="registerForm.invalid"
+          type="submit"
+          mat-flat-button
+          color="primary"
+        >
           Create an account
         </button>
       </div>

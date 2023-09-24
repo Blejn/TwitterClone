@@ -40,14 +40,8 @@ export class LoginFormComponent implements OnInit {
 
   createLoginForm() {
     return this.formBuilder.group({
-      username: this.formBuilder.control('', [
-        Validators.required,
-        Validators.minLength(3),
-      ]),
-      password: this.formBuilder.control('', [
-        Validators.required,
-        Validators.minLength(6),
-      ]),
+      username: this.formBuilder.control('', [Validators.required]),
+      password: this.formBuilder.control('', [Validators.required]),
     });
   }
   modeChanged() {
@@ -56,13 +50,14 @@ export class LoginFormComponent implements OnInit {
 
   loginHandler() {
     const data = this.loginForm.getRawValue();
-    this.authService.login(data).subscribe((tokens: any) => {
-      this.store.dispatch(login(data));
-      this.router.navigate(['/home']);
-      this.authService._isLoggedIn.next(true);
-      this.authService.isUserLogged();
-      this.session$.next(tokens);
-      this.toastr.success('Login succesfully');
-    });
+    //     this.store.dispatch(login(data));
+    //     this.router.navigate(['/home']);
+    //     this.authService._isLoggedIn.next(true);
+    //     this.authService.isUserLogged();
+    //     this.session$.next(tokens);
+    //     this.toastr.success('Login succesfully');
+    this.store.dispatch(login(data));
+
+    // }
   }
 }
