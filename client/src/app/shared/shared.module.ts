@@ -25,6 +25,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSliderModule } from '@angular/material/slider';
 
 @NgModule({
   declarations: [],
@@ -38,6 +39,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatInputModule,
     MatCardModule,
     MatPaginatorModule,
+    MatSliderModule,
     MatSortModule,
     MatTableModule,
     MatDialogModule,

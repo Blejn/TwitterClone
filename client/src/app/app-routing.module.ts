@@ -10,7 +10,6 @@ import { AuthGuard } from './guards/auth.guard';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 export class CustomPreload implements PreloadingStrategy {
   preload(route: Route, fn: () => Observable<any>): Observable<any> {
-    console.log(route.data);
     return route.data && route.data['preload'] ? fn() : of(null);
   }
 }

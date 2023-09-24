@@ -23,10 +23,6 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.isDarkTheme = this.themeService.isDarkTheme;
   }
-  onActive(event: any) {
-    console.log('activate', event);
-  }
-  onDeactive(event: any) {
-    console.log('deactive', event);
-  }
+  onActive(event: any) {}
+  onDeactive(event: any) {}
 }

@@ -6,7 +6,7 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, empty } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { CookieServiceService } from './../services/cookie-service.service';
 
@@ -37,9 +37,10 @@ export class HttprequestInterceptor implements HttpInterceptor {
     return next.handle(authReq).pipe(
       catchError((err, caught) => {
         if (err instanceof HttpErrorResponse && err.status === 403) {
-          // this.authService.logout();   Dodam jak będzie GUARD
+          return throwError(() => err);
+        } else {
         }
-        return empty();
+        return throwError(() => err);
       })
     );
   }

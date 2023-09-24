@@ -3,4 +3,5 @@ export interface UserLogged {
 
   username: string;
   email: string;
+  profile_picture: string;
 }

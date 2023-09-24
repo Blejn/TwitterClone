@@ -8,6 +8,7 @@ import { JWTTokenService } from './../../../../services/jwttoken.service';
 const jwtService = new JWTTokenService();
 const cookieService = new CookieServiceService(jwtService);
 const initialState: AuthStateInterface = {
+  message: '',
   isLoading: false,
   isLoggedin: cookieService.getUserDetails() != null ? true : false,
   userInfo:
@@ -44,14 +45,27 @@ export const loginReducers = createReducer(
       ...state,
       isLoggedin: true,
       userInfo: jwtDecode(action.accessToken),
-
       accessToken: action.accessToken,
       refreshToken: action.refreshToken,
       isLoading: false,
     };
+  }),
+  on(LoginActions.loginFailure, (state: any, action: any) => {
+    return { ...state, error: action.error, isLoading: false };
+  }),
+  on(LoginActions.register, (state: any) => {
+    return { ...state, isLoading: true };
+  }),
+  on(LoginActions.registerSuccess, (state: any, action: any) => {
+    return {
+      ...state,
+      message: action,
+    };
+  }),
+  on(LoginActions.registerFailure, (state: any, action: any) => {
+    return {
+      ...state,
+      error: action.error,
+    };
   })
 );
-on(LoginActions.loginFailure, (state: any, action: any) => ({
-  ...state,
-  error: action.error,
-}));

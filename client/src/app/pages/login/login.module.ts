@@ -8,12 +8,18 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { LoginRoutingModule } from './login-routing.module';
 import { LoginComponent } from './login.component';
+import { AvatarUploadComponent } from './register-form/avatar-upload/avatar-upload.component';
 import { RegisterFormComponent } from './register-form/register-form.component';
 import { LoginEffects } from './store/effects/login.effects';
 import { loginReducers } from './store/reducers/login.reducers';
 
 @NgModule({
-  declarations: [LoginComponent, LoginFormComponent, RegisterFormComponent],
+  declarations: [
+    LoginComponent,
+    LoginFormComponent,
+    RegisterFormComponent,
+    AvatarUploadComponent,
+  ],
   imports: [
     SharedModule,
     CommonModule,

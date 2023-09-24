@@ -1,10 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/interfaces/states/AppState';
 import {
   matchPasswords,
   validateUsername,
 } from 'src/app/validation/password-match.directive';
+import { register } from '../store/actions/login.actions';
 import { AuthService } from './../../../services/auth.service';
 
 @Component({
@@ -21,7 +24,8 @@ export class RegisterFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private store: Store<AppState>
   ) {}
   //bufferCount buffer rxjs
 
@@ -66,9 +70,9 @@ export class RegisterFormComponent implements OnInit {
   registerHandler() {
     let user = this.registerForm.getRawValue();
     console.log(user);
-    this.authService.register(user).subscribe(() => {
-      alert('your register success');
-      this.modeChanged();
-    });
+    this.store.dispatch(register(user));
+    // this.authService.register(user).subscribe(() => {
+    //   this.modeChanged();
+    // });
   }
 }

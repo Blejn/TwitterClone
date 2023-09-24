@@ -10,13 +10,25 @@
       (change)="toggleDarkTheme($event.checked)"
     ></mat-slide-toggle>
 
-    <ng-container *ngIf="isUserLogged">
+    <ng-container *ngIf="auth$ | async">
       <button mat-icon-button [matMenuTriggerFor]="userMenu">
-        <ngx-avatar size="40" class="my-avatar" value="{{ avatarLogoLetter }}">
+        <ngx-avatar
+          *ngIf="user.profile_picture === ''"
+          size="40"
+          class="my-avatar"
+          value="{{ avatarLogoLetter }}"
+        >
+        </ngx-avatar>
+        <ngx-avatar
+          *ngIf="user.profile_picture !== ''"
+          size="40"
+          class="my-avatar"
+          src="{{ user.profile_picture }}"
+        >
         </ngx-avatar>
       </button>
     </ng-container>
-    <ng-container *ngIf="!isUserLogged">
+    <ng-container *ngIf="!(auth$ | async)">
       <button (click)="navigation('/login')" mat-icon-button>Login</button>
     </ng-container>
   </mat-toolbar-row>
