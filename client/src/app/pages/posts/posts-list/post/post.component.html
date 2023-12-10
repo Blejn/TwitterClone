@@ -41,6 +41,7 @@
       *ngIf="userDetails?.username === post.username"
       mat-button
       color="primary"
+      (click)="deletePost()"
     >
       <mat-icon>delete</mat-icon>
     </button>
@@ -94,6 +95,7 @@
           class="trash_button"
           *ngIf="userDetails?.username === comment.username"
           mat-button
+          (click)="removeComment(comment.id, comment.comment)"
         >
           <mat-icon>delete</mat-icon>
         </button>

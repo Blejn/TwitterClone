@@ -1,8 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { ToastrService } from 'ngx-toastr';
 import { catchError, map, mergeMap, of, tap } from 'rxjs';
+import { CommentForm } from 'src/app/interfaces/CommentForm';
 import { PostService } from 'src/app/services/post.service';
 import * as PostsActions from '../actions/post.actions';
+
+interface ResponseDelete {
+  id: string;
+  postid: string;
+}
+
 @Injectable()
 export class PostEffects {
   public state: any = {
@@ -10,7 +18,11 @@ export class PostEffects {
     page: 1,
     limit: 3,
   };
-  constructor(private actions$: Actions, private postService: PostService) {}
+  constructor(
+    private actions$: Actions,
+    private postService: PostService,
+    private toastr: ToastrService
+  ) {}
 
   getPosts$ = createEffect(() =>
     this.actions$.pipe(
@@ -99,7 +111,6 @@ export class PostEffects {
             action.postId
           )
           .pipe(
-            tap((res) => console.log(res)),
             map(() =>
               PostsActions.addCommentToPostSuccess({
                 id: action.id,
@@ -109,9 +120,39 @@ export class PostEffects {
                 postId: action.postId,
               })
             ),
-            catchError((error) =>
-              of(PostsActions.addCommentToPostFailed(error))
-            )
+            catchError((error) => {
+              this.toastr.error(error.error);
+              return of(PostsActions.addCommentToPostFailed(error));
+            })
+          );
+      })
+    )
+  );
+
+  deleteComment$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(PostsActions.deleteCommentFromPost),
+      mergeMap((action: CommentForm) => {
+        return this.postService
+          .deleteCommentFromPost(
+            action.id,
+            action.userId,
+            action.username,
+            action.comment,
+            action.postId
+          )
+          .pipe(
+            map((res: ResponseDelete) => {
+              this.toastr.success(res.message);
+              return PostsActions.deleteCommentFromPostSuccess({
+                id: res.id,
+                postId: res.postid,
+              });
+            }),
+            catchError((error) => {
+              this.toastr.error(error.error);
+              return of(PostsActions.deleteCommentFromPosttFailed(error));
+            })
           );
       })
     )

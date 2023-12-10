@@ -713,13 +713,18 @@ app.post("/posts/:postId/removeComment", (req, res) => {
     },
     postId,
   ];
-
   // Wykonaj zapytanie do bazy danych, aby dodać komentarz do posta
   client
     .query(query, values)
     .then(() => {
       // Komentarz został dodany pomyślnie
-      res.status(200).json({ message: "Komentarz został dodany do posta" });
+      res
+        .status(200)
+        .json({
+          message: "You remove comment from post",
+          id: id,
+          postId: postId,
+        });
     })
     .catch(error => {
       // Wystąpił błąd podczas dodawania komentarza

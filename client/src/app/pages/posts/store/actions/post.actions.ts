@@ -86,9 +86,6 @@ export const deleteCommentFromPostSuccess = createAction(
   '[Posts] Delete comment success',
   props<{
     id: string;
-    userId: string;
-    username: string;
-    comment: string;
     postId: string;
   }>()
 );

@@ -139,7 +139,7 @@ export const reducers = createReducer(
     isLoading: true,
   })),
 
-  on(PostsActions.addCommentToPostSuccess, (state, { id, postId }) => {
+  on(PostsActions.deleteCommentFromPostSuccess, (state, { id, postId }) => {
     const updatedPosts = state.posts.results.map((post) =>
       post.id === postId
         ? {

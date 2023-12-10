@@ -116,6 +116,9 @@ export class PostComponent implements OnInit, AfterContentInit {
   viewPostComments() {
     this.viewComments = !this.viewComments;
   }
+  deletePost() {
+    console.log('post');
+  }
 
   isReaction(): boolean | undefined {
     return this.post.reactions?.some((id) => this.userDetails?.id == id);
@@ -134,6 +137,18 @@ export class PostComponent implements OnInit, AfterContentInit {
 
       this.store.dispatch(PostsAcions.removeReactionFromPost(props));
       this.toast.success('You dislike this post!');
+    }
+  }
+  removeComment(id: string, comment: string) {
+    if (this.userDetails?.username && this.userDetails.id) {
+      const props = {
+        id: id,
+        userId: this.userDetails?.id,
+        username: this.userDetails?.username,
+        comment: comment,
+        postId: this.post.id,
+      };
+      this.store.dispatch(PostsAcions.deleteCommentFromPost(props));
     }
   }
   createComment() {

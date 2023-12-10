@@ -133,6 +133,7 @@ export class PostService {
       .post<string>(
         environment.API_URL + this.apiUrl + '/' + postId + '/comments',
         {
+          id: commentForm.id,
           userId: commentForm.userId,
           username: commentForm.username,
           comment: commentForm.comment,
